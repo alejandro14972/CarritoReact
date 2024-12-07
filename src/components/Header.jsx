@@ -1,7 +1,13 @@
-export default function Header({ carrito }) {
-console.log('====================================');
-console.log(carrito);
-console.log('====================================');
+import { useState, useEffect } from "react";
+export default function Header({ carrito, eliminarElemento, aumentarcantidad, reducirCantidad, limpiarCarrito }) {
+    //    const vacio = () => carrito.length === 0;
+    const [precioTotal, setPrecioTotal] = useState(0);
+    const carritoTotal = () => carrito.reduce((total, item) => total + (item.cantidad * item.price), 0);
+
+    useEffect(() => {
+        setPrecioTotal(carritoTotal());
+    }, [carrito]);
+
     return (
         <>
             <header className="py-5 header">
@@ -19,57 +25,71 @@ console.log('====================================');
                                 <img className="img-fluid" src="./public/img/carrito.png" alt="imagen carrito" />
 
                                 <div id="carrito" className="bg-white p-3">
-                                    <p className="text-center">El carrito esta vacio</p>
-                                    <table className="w-100 table">
-                                        <thead>
-                                            <tr>
-                                                <th>Imagen</th>
-                                                <th>Nombre</th>
-                                                <th>Precio</th>
-                                                <th>Cantidad</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {carrito.map(g => (
-                                                <tr key={g.id}>
-                                                    <td>
-                                                        <img className="img-fluid" src={`/img/${g.image}.jpg`}alt="imagen guitarra" />
-                                                    </td>
-                                                    <td>{g.name}</td>
-                                                    <td className="fw-bold">
-                                                        {g.price}
-                                                    </td>
-                                                    <td className="flex align-items-start gap-4">
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-dark"
-                                                        >
-                                                            -
-                                                        </button>
-                                                        {g.cantidad}
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-dark"
-                                                        >
-                                                            +
-                                                        </button>
-                                                    </td>
-                                                    <td>
-                                                        <button
-                                                            className="btn btn-danger"
-                                                            type="button"
-                                                        >
-                                                            X
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
 
-                                    <p className="text-end">Total pagar: <span className="fw-bold">$899</span></p>
-                                    <button className="btn btn-dark w-100 mt-3 p-2">Vaciar Carrito</button>
+                                    {carrito.length === 0 ? (
+                                        <p className="text-center">El carrito esta vacio</p>
+                                    ) : (
+                                        <>
+                                            <table className="w-100 table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Imagen</th>
+                                                        <th>Nombre</th>
+                                                        <th>Precio</th>
+                                                        <th>Cantidad</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {carrito.map(g => (
+                                                        <tr key={g.id}>
+                                                            <td>
+                                                                <img className="img-fluid" src={`/img/${g.image}.jpg`} alt="imagen guitarra" />
+                                                            </td>
+                                                            <td>{g.name}</td>
+                                                            <td className="fw-bold">
+                                                                {g.price}
+                                                            </td>
+                                                            <td className="flex align-items-start gap-4">
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-dark"
+                                                                    onClick={() => reducirCantidad(g.id)}
+                                                                >
+                                                                    -
+                                                                </button>
+                                                                {g.cantidad}
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-dark"
+                                                                    onClick={() => aumentarcantidad(g.id)}
+                                                                >
+                                                                    +
+                                                                </button>
+                                                            </td>
+                                                            <td>
+                                                                <button
+                                                                    className="btn btn-danger"
+                                                                    type="button"
+                                                                    onClick={() => eliminarElemento(g.id)}
+                                                                >
+                                                                    X
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                            <p className="text-end">Total pagar: <span className="fw-bold">{precioTotal}€</span></p>
+
+                                            <button
+                                                className="btn btn-dark w-100 mt-3 p-2"
+                                                onClick={limpiarCarrito}
+                                            >
+                                                Vaciar Carrito</button>
+                                        </>
+                                    )}
+
                                 </div>
                             </div>
                         </nav>
