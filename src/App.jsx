@@ -2,11 +2,25 @@ import { useState, useEffect } from "react";
 import Header from "./components/Header"
 import Guitar from "./components/Guitar"
 import { db } from "./data/db";
+import { useCarrito } from "./hooks/useCarrito";
 
 function App() {
+  const initialCarrito = () => {
+    const almacenamientoCarrito = localStorage.getItem('carrito');
+
+    if (almacenamientoCarrito == null) {
+      return [];
+    } else {
+      return JSON.parse(almacenamientoCarrito)
+    }
+  }
 
   const [data, setData] = useState(db);
-  const [carrito, setCarrito] = useState([]);
+  const [carrito, setCarrito] = useState(initialCarrito);
+
+  useEffect(()=>{ //usaremos el use efect para cunado el estado de carrito cambie llmaremos al local 
+    localStorage.setItem("carrito", JSON.stringify(carrito))
+  },[carrito])
 
   function addCart(item) {
     const itemExist = carrito.findIndex(p => p.id === item.id);
@@ -52,7 +66,6 @@ function App() {
   function limpiarCarrito(){
       setCarrito([])
   }
-
 
   return (
     <>
